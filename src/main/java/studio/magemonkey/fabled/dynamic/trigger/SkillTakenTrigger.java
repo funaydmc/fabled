@@ -11,6 +11,8 @@ import studio.magemonkey.fabled.api.event.SkillDamageEvent;
  */
 public class SkillTakenTrigger extends SkillTrigger {
 
+    private String takenValue = "api-taken";
+
     /**
      * {@inheritDoc}
      */
@@ -39,7 +41,16 @@ public class SkillTakenTrigger extends SkillTrigger {
      * {@inheritDoc}
      */
     @Override
+    public boolean shouldTrigger(final SkillDamageEvent event, final int level, final Settings settings) {
+        takenValue = settings.getString("taken-value", takenValue);
+        return super.shouldTrigger(event, level, settings);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void setValues(final SkillDamageEvent event, final CastData data) {
-        data.put("api-taken", event.getDamage());
+        data.put(takenValue, event.getDamage());
     }
 }

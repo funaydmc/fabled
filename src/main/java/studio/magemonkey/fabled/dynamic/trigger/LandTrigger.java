@@ -11,6 +11,8 @@ import studio.magemonkey.fabled.api.event.PlayerLandEvent;
  */
 public class LandTrigger implements Trigger<PlayerLandEvent> {
 
+    private String distanceValue = "api-distance";
+
     /**
      * {@inheritDoc}
      */
@@ -32,6 +34,7 @@ public class LandTrigger implements Trigger<PlayerLandEvent> {
      */
     @Override
     public boolean shouldTrigger(final PlayerLandEvent event, final int level, final Settings settings) {
+        distanceValue = settings.getString("distance-value", distanceValue);
         final double minDistance = settings.getDouble("min-distance", 0);
         return event.getDistance() >= minDistance;
     }
@@ -41,7 +44,7 @@ public class LandTrigger implements Trigger<PlayerLandEvent> {
      */
     @Override
     public void setValues(final PlayerLandEvent event, final CastData data) {
-        data.put("api-distance", event.getDistance());
+        data.put(distanceValue, event.getDistance());
     }
 
     /**

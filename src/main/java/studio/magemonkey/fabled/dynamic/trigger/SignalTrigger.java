@@ -10,6 +10,8 @@ import java.util.Objects;
 
 public class SignalTrigger implements Trigger<SignalEmitEvent> {
 
+    private String argValue = "api-arg";
+
     /**
      * {@inheritDoc}
      */
@@ -31,6 +33,7 @@ public class SignalTrigger implements Trigger<SignalEmitEvent> {
      */
     @Override
     public boolean shouldTrigger(SignalEmitEvent event, int level, Settings settings) {
+        argValue = settings.getString("arg-value", argValue);
         return Objects.equals(settings.getString("signal"), event.getSignal());
     }
 
@@ -42,8 +45,8 @@ public class SignalTrigger implements Trigger<SignalEmitEvent> {
         List<Object> arguments = event.getArguments();
         for (int i = 0; i < arguments.size(); i++) {
             Object arg = arguments.get(i);
-            if (i == 0) data.put("api-arg", arg);
-            data.put(String.format("api-arg[%d]", i), arg);
+            if (i == 0) data.put(argValue, arg);
+            data.put(String.format(argValue + "[%d]", i), arg);
         }
     }
 

@@ -7,6 +7,8 @@ import studio.magemonkey.fabled.api.event.PlayerBlockDamageEvent;
 
 public class ShieldTrigger implements Trigger<PlayerBlockDamageEvent> {
 
+    private String blockedValue = "api-blocked";
+
     /**
      * {@inheritDoc}
      */
@@ -26,6 +28,7 @@ public class ShieldTrigger implements Trigger<PlayerBlockDamageEvent> {
      */
     @Override
     public boolean shouldTrigger(PlayerBlockDamageEvent event, int level, Settings settings) {
+        blockedValue = settings.getString("blocked-value", blockedValue);
         String type = settings.getString("type", "Both").toLowerCase();
         if (!type.equals("both") && !type.equals(event.getType())) return false;
         double min = settings.getDouble("dmg-min", 0);
@@ -38,7 +41,7 @@ public class ShieldTrigger implements Trigger<PlayerBlockDamageEvent> {
      */
     @Override
     public void setValues(PlayerBlockDamageEvent event, final CastData data) {
-        data.put("api-blocked", event.getDamage());
+        data.put(blockedValue, event.getDamage());
     }
 
     /**

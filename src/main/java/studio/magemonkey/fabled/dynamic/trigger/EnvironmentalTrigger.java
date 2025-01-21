@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
  */
 public class EnvironmentalTrigger implements Trigger<EntityDamageEvent> {
 
+    private String takenValue = "api-taken";
+
     /**
      * {@inheritDoc}
      */
@@ -39,6 +41,7 @@ public class EnvironmentalTrigger implements Trigger<EntityDamageEvent> {
      */
     @Override
     public boolean shouldTrigger(final EntityDamageEvent event, final int level, final Settings settings) {
+        takenValue = settings.getString("taken-value", takenValue);
         if (event instanceof EntityDamageByEntityEvent
                 && DefaultCombatProtection.isFakeDamageEvent((EntityDamageByEntityEvent) event)) {
             return false;
@@ -58,7 +61,7 @@ public class EnvironmentalTrigger implements Trigger<EntityDamageEvent> {
      */
     @Override
     public void setValues(final EntityDamageEvent event, final CastData data) {
-        data.put("api-taken", event.getDamage());
+        data.put(takenValue, event.getDamage());
     }
 
     /**
