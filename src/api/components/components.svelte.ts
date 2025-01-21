@@ -85,10 +85,18 @@ class AttributeChangeTrigger extends FabledTrigger {
 		super({
 			name:         'Attribute Change',
 			description:  'Applies skill effects when a player\'s attribute changes. <code>api-attribute</code> is the attribute name, '
-											+ '<code>api-change</code> is the change, and <code>api-value</code> is the new value',
-			data:         [new DropdownSelect('Attribute', 'attr', () => ['Any', ...attributeStore.getAttributeNames()], ['Any'], true)
-				.setTooltip('The attribute to check for')],
-			summaryItems: ['attr']
+				+ '<code>api-change</code> is the change, and <code>api-value</code> is the new value',
+			data: [
+				new DropdownSelect('Attribute', 'attr', () => ['Any', ...attributeStore.getAttributeNames()], ['Any'], true)
+					.setTooltip('The attribute to check for'),
+				new StringSelect('Attribute Value', 'attr-value', '')
+					.setTooltip('Value name that will be used to store the changed attribute name'),
+				new StringSelect('Change Value', 'change-value', '')
+					.setTooltip('Value name that will be used to store the attribute change amount'),
+				new StringSelect('Value Value', 'value-value', '')
+					.setTooltip('Value name that will be used to store the new attribute value')
+			],
+			summaryItems: ['attr', 'attr-value', 'change-value', 'value-value']
 		});
 	}
 
@@ -100,11 +108,17 @@ class BlockBreakTrigger extends FabledTrigger {
 		super({
 			name:         'Block Break',
 			description:  'Applies skill effects when a player breaks a block matching the given details',
-			data:         [new BlockSelect(
-				'The type of block expected to be broken',
-				'The expected data value of the block (-1 for any data value)'
-			)],
-			summaryItems: ['block']
+			data:         [
+				new BlockSelect(
+					'The type of block expected to be broken',
+					'The expected data value of the block (-1 for any data value)'
+				),
+				new StringSelect('Type Value', 'type-value', '')
+					.setTooltip('Value name that will be used to store the broken block type'),
+				new StringSelect('Location Value', 'loc-value', '')
+					.setTooltip('Value name that will be used to store the broken block location')
+			],
+			summaryItems: ['block', 'type-value', 'loc-value']
 		});
 	}
 
@@ -116,11 +130,17 @@ class BlockPlaceTrigger extends FabledTrigger {
 		super({
 			name:         'Block Place',
 			description:  'Applies skill effects when a player places a block matching the given details',
-			data:         [new BlockSelect(
-				'The type of block expected to be placed',
-				'The expected data value of the block (-1 for any data value)'
-			)],
-			summaryItems: ['block']
+			data:         [
+				new BlockSelect(
+					'The type of block expected to be placed',
+					'The expected data value of the block (-1 for any data value)'
+				),
+				new StringSelect('Type Value', 'type-value', '')
+					.setTooltip('Value name that will be used to store the placed block type'),
+				new StringSelect('Location Value', 'loc-value', '')
+					.setTooltip('Value name that will be used to store the placed block location')
+			],
+			summaryItems: ['block', 'type-value', 'loc-value']
 		});
 	}
 
@@ -149,9 +169,11 @@ class ChatTrigger extends FabledTrigger {
 				new BooleanSelect('Regex', 'regex', false)
 					.setTooltip('Whether to use format value as regex or check if message contains format value'),
 				new StringSelect('Format', 'format', '')
-					.setTooltip('Format of message (if message contains format or regex)')
+					.setTooltip('Format of message (if message contains format or regex)'),
+				new StringSelect('Message Value', 'message-value', '')
+					.setTooltip('Value name that will be used to store the chat message')
 			],
-			summaryItems: ['format', 'cancel']
+			summaryItems: ['format', 'cancel', 'message-value']
 		});
 	}
 
@@ -255,9 +277,11 @@ class EnvironmentDamageTrigger extends FabledTrigger {
 			description:  'Applies skill effects when a player takes environmental damage',
 			data:         [
 				new DropdownSelect('Type', 'type', getAnyDamageTypes, ['Fall'], true)
-					.setTooltip('The source of damage to apply for')
+					.setTooltip('The source of damage to apply for'),
+				new StringSelect('Taken Value', 'taken-value', '')
+					.setTooltip('Value name that will be used to store the amount of damage taken')
 			],
-			summaryItems: ['type']
+			summaryItems: ['type', 'taken-value']
 		});
 	}
 
@@ -339,9 +363,11 @@ class HealTrigger extends FabledTrigger {
 				new DoubleSelect('Min Heal', 'heal-min', 0)
 					.setTooltip('The minimum health that needs to be received'),
 				new DoubleSelect('Max Heal', 'heal-max', 999)
-					.setTooltip('The maximum health that needs to be received')
+					.setTooltip('The maximum health that needs to be received'),
+				new StringSelect('Heal Value', 'heal-value', '')
+					.setTooltip('Value name that will be used to store the amount of health received')
 			],
-			summaryItems: ['heal-min', 'heal-max']
+			summaryItems: ['heal-min', 'heal-max', 'heal-value']
 		});
 	}
 
@@ -399,7 +425,7 @@ class KillTrigger extends FabledTrigger {
 			summaryItems: ['target']
 		});
 	}
-
+d
 	public static override new = () => new this();
 }
 
@@ -408,9 +434,13 @@ class LandTrigger extends FabledTrigger {
 		super({
 			name:         'Land',
 			description:  'Applies skill effects when a player lands on the ground',
-			data:         [new DoubleSelect('Min Distance', 'min-distance')
-				.setTooltip('The minimum distance the player should fall before effects activate')],
-			summaryItems: ['min-distance']
+			data:         [
+				new DoubleSelect('Min Distance', 'min-distance')
+					.setTooltip('The minimum distance the player should fall before effects activate'),
+				new StringSelect('Distance Value', 'distance-value', '')
+					.setTooltip('Value name that will be used to store the fall distance')
+			],
+			summaryItems: ['min-distance', 'distance-value']
 		});
 	}
 
@@ -422,9 +452,13 @@ class LaunchTrigger extends FabledTrigger {
 		super({
 			name:         'Launch',
 			description:  'Applies skill effects when a player launches a projectile',
-			data:         [new DropdownSelect('Type', 'type', getAnyProjectiles, 'Any')
-				.setTooltip('The type of projectile that should be launched')],
-			summaryItems: ['type']
+			data:         [
+				new DropdownSelect('Type', 'type', getAnyProjectiles, 'Any')
+					.setTooltip('The type of projectile that should be launched'),
+				new StringSelect('Velocity Value', 'velocity-value', '')
+					.setTooltip('Value name that will be used to store the projectile velocity')
+			],
+			summaryItems: ['type', 'velocity-value']
 		});
 	}
 
@@ -449,7 +483,12 @@ class MoveTrigger extends FabledTrigger {
 	public constructor() {
 		super({
 			name:        'Move',
-			description: 'Applies skill effects when a player moves around. This triggers every tick the player is moving, so use this sparingly. Use the \'api-moved\' value to check/use the distance traveled'
+			description: 'Applies skill effects when a player moves around. This triggers every tick the player is moving, so use this sparingly. Use the \'api-moved\' value to check/use the distance traveled',
+			data: [
+				new StringSelect('Distance Value', 'distance-value', '')
+					.setTooltip('Value name that will be used to store the distance moved')
+			],
+			summaryItems: ['distance-value']
 		});
 	}
 
@@ -469,9 +508,11 @@ class PhysicalDamageTrigger extends FabledTrigger {
 				new DoubleSelect('Min Damage', 'dmg-min', 0)
 					.setTooltip('The minimum damage that needs to be dealt'),
 				new DoubleSelect('Max Damage', 'dmg-max', 999)
-					.setTooltip('The minimum damage that needs to be dealt')
+					.setTooltip('The minimum damage that needs to be dealt'),
+				new StringSelect('Dealt Value', 'dealt-value', '')
+					.setTooltip('Value name that will be used to store the amount of damage dealt')
 			],
-			summaryItems: ['target', 'type', 'dmg-min', 'dmg-max']
+			summaryItems: ['target', 'type', 'dmg-min', 'dmg-max', 'dealt-value']
 		});
 	}
 
@@ -547,9 +588,13 @@ class SkillCastTrigger extends FabledTrigger {
 				new StringListSelect('Classes', 'allowed-classes')
 					.setTooltip('The list of classes which will trigger this effect. Leave blank to allow all to trigger. Use \'!xxx\' to exclude'),
 				new StringListSelect('Skills', 'allowed-skills')
-					.setTooltip('The list of skills which will trigger this effect. Leave blank to allow all to trigger. Use \'!xxx\' to exclude')
+					.setTooltip('The list of skills which will trigger this effect. Leave blank to allow all to trigger. Use \'!xxx\' to exclude'),
+				new StringSelect('Skill Value', 'skill-value', '')
+					.setTooltip('Value name that will be used to store the skill name'),
+				new StringSelect('Class Value', 'mana-value', '')
+					.setTooltip('Value name that will be used to store the mana cost of the skill')
 			],
-			summaryItems: ['cancel', 'allowed-classes', 'allowed-skills']
+			summaryItems: ['cancel', 'allowed-classes', 'allowed-skills', 'skill-value', 'mana-value']
 		});
 	}
 
@@ -569,9 +614,11 @@ class SkillDamageTrigger extends FabledTrigger {
 				new DoubleSelect('Max Damage', 'dmg-max', 999)
 					.setTooltip('The maximum damage that needs to be dealt'),
 				new StringListSelect('Category', 'category', ['default'])
-					.setTooltip('The type of skill damage to apply for. Leave this empty to apply to all skill damage')
+					.setTooltip('The type of skill damage to apply for. Leave this empty to apply to all skill damage'),
+				new StringSelect('Damage Value', 'dealt-value', '')
+					.setTooltip('Value name that will be used to store the amount of damage dealt')
 			],
-			summaryItems: ['target', 'dmg-min', 'dmg-max', 'category']
+			summaryItems: ['target', 'dmg-min', 'dmg-max', 'category', 'dealt-value']
 		});
 	}
 
@@ -591,9 +638,11 @@ class TookPhysicalTrigger extends FabledTrigger {
 				new DoubleSelect('Min Damage', 'dmg-min', 0)
 					.setTooltip('The minimum damage that needs to be dealt'),
 				new DoubleSelect('Max Damage', 'dmg-max', 999)
-					.setTooltip('The maximum damage that needs to be dealt')
+					.setTooltip('The maximum damage that needs to be dealt'),
+				new StringSelect('Taken Value', 'taken-value', '')
+					.setTooltip('Value name that will be used to store the amount of damage taken')
 			],
-			summaryItems: ['target', 'type', 'dmg-min', 'dmg-max']
+			summaryItems: ['target', 'type', 'dmg-min', 'dmg-max', 'taken-value']
 		});
 	}
 
@@ -613,9 +662,11 @@ class TookSkillTrigger extends FabledTrigger {
 				new DoubleSelect('Max Damage', 'dmg-max', 999)
 					.setTooltip('The maximum damage that needs to be dealt'),
 				new StringListSelect('Category', 'category', ['default'])
-					.setTooltip('The type of skill damage to apply for. Leave this empty to apply to all skill damage')
+					.setTooltip('The type of skill damage to apply for. Leave this empty to apply to all skill damage'),
+				new StringSelect('Taken Value', 'taken-value', '')
+					.setTooltip('Value name that will be used to store the amount of damage taken')
 			],
-			summaryItems: ['target', 'dmg-min', 'dmg-max', 'category']
+			summaryItems: ['target', 'dmg-min', 'dmg-max', 'category', 'taken-value']
 		});
 	}
 
@@ -635,9 +686,11 @@ class ShieldTrigger extends FabledTrigger {
 				new DoubleSelect('Damage Heal', 'dmg-min', 0)
 					.setTooltip('The minimum damage that needs to be blocked'),
 				new DoubleSelect('Damage Heal', 'dmg-max', 999)
-					.setTooltip('The maximum damage that needs to be blocked')
+					.setTooltip('The maximum damage that needs to be blocked'),
+				new StringSelect('Blocked Value', 'blocked-value', '')
+					.setTooltip('Value name that will be used to store the amount of damage blocked')
 			],
-			summaryItems: ['target', 'type', 'dmg-min', 'dmg-max']
+			summaryItems: ['target', 'type', 'dmg-min', 'dmg-max', 'blocked-value']
 		});
 	}
 
@@ -653,9 +706,11 @@ class SignalTrigger extends FabledTrigger {
 				new BooleanSelect('Target Receiver', 'target', true)
 					.setTooltip('True makes children target the receiver. False makes children target the emitter'),
 				new StringSelect('Signal', 'signal')
-					.setTooltip('Name of signal want to receive.')
+					.setTooltip('Name of signal want to receive.'),
+				new StringSelect('Argument Value', 'arg-value', '')
+					.setTooltip('Value name that will be used to store the signal argument')
 			],
-			summaryItems: ['target', 'signal']
+			summaryItems: ['target', 'signal', 'arg-value']
 		});
 	}
 
