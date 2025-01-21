@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 
 public class SkillCastTrigger implements Trigger<PlayerCastSkillEvent> {
 
+    private String skillValue = "api-skill";
+    private String manaValue = "api-mana";
+
     /**
      * {@inheritDoc}
      */
@@ -31,6 +34,8 @@ public class SkillCastTrigger implements Trigger<PlayerCastSkillEvent> {
      */
     @Override
     public boolean shouldTrigger(final PlayerCastSkillEvent event, final int level, final Settings settings) {
+        skillValue = settings.getString("skill-value", skillValue);
+        manaValue = settings.getString("mana-value", manaValue);
         List<String> classes = settings.getStringList("allowed-classes")
                 .stream()
                 .filter(s -> !s.isEmpty())
@@ -72,8 +77,8 @@ public class SkillCastTrigger implements Trigger<PlayerCastSkillEvent> {
      */
     @Override
     public void setValues(final PlayerCastSkillEvent event, final CastData data) {
-        data.put("api-skill", event.getSkill().getData().getName());
-        data.put("api-mana", event.getManaCost());
+        data.put(skillValue, event.getSkill().getData().getName());
+        data.put(manaValue, event.getManaCost());
     }
 
     /**

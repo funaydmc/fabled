@@ -6,6 +6,9 @@ import studio.magemonkey.fabled.api.CastData;
 import studio.magemonkey.fabled.api.Settings;
 
 public class HealTrigger implements Trigger<EntityRegainHealthEvent> {
+
+    private String healValue = "api-heal";
+
     /**
      * {@inheritDoc}
      */
@@ -25,6 +28,7 @@ public class HealTrigger implements Trigger<EntityRegainHealthEvent> {
      */
     @Override
     public boolean shouldTrigger(EntityRegainHealthEvent event, int level, Settings settings) {
+        healValue = settings.getString("heal-value", healValue);
         final double min = settings.getDouble("heal-min");
         final double max = settings.getDouble("heal-max");
         return event.getAmount() >= min && event.getAmount() <= max;
@@ -35,7 +39,7 @@ public class HealTrigger implements Trigger<EntityRegainHealthEvent> {
      */
     @Override
     public void setValues(EntityRegainHealthEvent event, CastData data) {
-        data.put("api-heal", event.getAmount());
+        data.put(healValue, event.getAmount());
     }
 
     /**

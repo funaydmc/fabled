@@ -11,6 +11,8 @@ import studio.magemonkey.fabled.api.Settings;
  */
 public class LaunchTrigger implements Trigger<ProjectileLaunchEvent> {
 
+    private String velocityValue = "api-velocity";
+
     /**
      * {@inheritDoc}
      */
@@ -32,6 +34,7 @@ public class LaunchTrigger implements Trigger<ProjectileLaunchEvent> {
      */
     @Override
     public boolean shouldTrigger(final ProjectileLaunchEvent event, final int level, final Settings settings) {
+        velocityValue = settings.getString("velocity-value", velocityValue);
         final String type = settings.getString("type", "any");
         return type.equalsIgnoreCase("ANY") || type.equalsIgnoreCase(event.getEntity().getType().name());
     }
@@ -41,7 +44,7 @@ public class LaunchTrigger implements Trigger<ProjectileLaunchEvent> {
      */
     @Override
     public void setValues(final ProjectileLaunchEvent event, final CastData data) {
-        data.put("api-velocity", event.getEntity().getVelocity().length());
+        data.put(velocityValue, event.getEntity().getVelocity().length());
     }
 
     /**

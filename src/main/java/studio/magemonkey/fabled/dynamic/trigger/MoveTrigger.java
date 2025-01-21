@@ -11,6 +11,8 @@ import studio.magemonkey.fabled.api.Settings;
  */
 public class MoveTrigger implements Trigger<PlayerMoveEvent> {
 
+    private String distanceValue = "api-distance";
+
     /**
      * {@inheritDoc}
      */
@@ -32,6 +34,7 @@ public class MoveTrigger implements Trigger<PlayerMoveEvent> {
      */
     @Override
     public boolean shouldTrigger(final PlayerMoveEvent event, final int level, final Settings settings) {
+        distanceValue = settings.getString("distance-value", distanceValue);
         return event.getFrom().getWorld() == event.getTo().getWorld();
     }
 
@@ -41,7 +44,7 @@ public class MoveTrigger implements Trigger<PlayerMoveEvent> {
     @Override
     public void setValues(final PlayerMoveEvent event, final CastData data) {
         final double distance = event.getTo().distance(event.getFrom());
-        data.put("api-distance", distance);
+        data.put(distanceValue, distance);
     }
 
     /**

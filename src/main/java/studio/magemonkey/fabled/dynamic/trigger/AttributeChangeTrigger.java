@@ -9,6 +9,10 @@ import java.util.List;
 
 public class AttributeChangeTrigger implements Trigger<PlayerAttributeChangeEvent> {
 
+    private String attributeValue = "api-attribute";
+    private String changeValue = "api-change";
+    private String valueValue = "api-value";
+
     /**
      * {@inheritDoc}
      */
@@ -30,6 +34,9 @@ public class AttributeChangeTrigger implements Trigger<PlayerAttributeChangeEven
      */
     @Override
     public boolean shouldTrigger(final PlayerAttributeChangeEvent event, final int level, final Settings settings) {
+        attributeValue = settings.getString("attribute-value", attributeValue);
+        changeValue = settings.getString("change-value", changeValue);
+        valueValue = settings.getString("value-value", valueValue);
         List<String> attrs = settings.getStringList("attr");
         if (attrs.isEmpty() || attrs.get(0).equals("Any")) return true;
 
@@ -41,9 +48,9 @@ public class AttributeChangeTrigger implements Trigger<PlayerAttributeChangeEven
      */
     @Override
     public void setValues(final PlayerAttributeChangeEvent event, final CastData data) {
-        data.put("api-attribute", event.getAttribute());
-        data.put("api-change", event.getChange());
-        data.put("api-value",
+        data.put(attributeValue, event.getAttribute());
+        data.put(changeValue, event.getChange());
+        data.put(valueValue,
                 event.getPlayerData().getInvestedAttributeStage(event.getAttribute()) + event.getChange());
     }
 

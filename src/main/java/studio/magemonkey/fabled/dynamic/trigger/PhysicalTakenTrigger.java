@@ -11,6 +11,8 @@ import studio.magemonkey.fabled.api.event.PhysicalDamageEvent;
  */
 public class PhysicalTakenTrigger extends PhysicalTrigger {
 
+    private String takenValue = "api-taken";
+
     /**
      * {@inheritDoc}
      */
@@ -39,7 +41,16 @@ public class PhysicalTakenTrigger extends PhysicalTrigger {
      * {@inheritDoc}
      */
     @Override
+    public boolean shouldTrigger(final PhysicalDamageEvent event, final int level, final Settings settings) {
+        takenValue = settings.getString("taken-value", takenValue);
+        return super.shouldTrigger(event, level, settings);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void setValues(final PhysicalDamageEvent event, final CastData data) {
-        data.put("api-taken", event.getDamage());
+        data.put(takenValue, event.getDamage());
     }
 }

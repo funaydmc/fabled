@@ -13,6 +13,9 @@ import java.util.List;
  */
 public class BlockPlaceTrigger implements Trigger<BlockPlaceEvent> {
 
+    private String blockTypeValue = "api-block-type";
+    private String blockLocValue = "api-block-loc";
+
     /**
      * {@inheritDoc}
      */
@@ -34,6 +37,8 @@ public class BlockPlaceTrigger implements Trigger<BlockPlaceEvent> {
      */
     @Override
     public boolean shouldTrigger(final BlockPlaceEvent event, final int level, final Settings settings) {
+        blockTypeValue = settings.getString("type-value", blockTypeValue);
+        blockLocValue = settings.getString("loc-value", blockLocValue);
         final List<String> types = settings.getStringList("material");
         return types.isEmpty() || types.contains("Any")
                 || types.stream()
@@ -45,8 +50,8 @@ public class BlockPlaceTrigger implements Trigger<BlockPlaceEvent> {
      */
     @Override
     public void setValues(final BlockPlaceEvent event, final CastData data) {
-        data.put("api-block-type", event.getBlock().getType().name());
-        data.put("api-block-loc", event.getBlock().getLocation());
+        data.put(blockTypeValue, event.getBlock().getType().name());
+        data.put(blockLocValue, event.getBlock().getLocation());
     }
 
     /**

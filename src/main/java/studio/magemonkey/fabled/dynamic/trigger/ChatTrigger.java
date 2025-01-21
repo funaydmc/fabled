@@ -11,6 +11,8 @@ import studio.magemonkey.fabled.api.Settings;
  */
 public class ChatTrigger implements Trigger<AsyncPlayerChatEvent> {
 
+    private String messageValue = "api-message";
+
     /**
      * {@inheritDoc}
      */
@@ -32,6 +34,7 @@ public class ChatTrigger implements Trigger<AsyncPlayerChatEvent> {
      */
     @Override
     public boolean shouldTrigger(final AsyncPlayerChatEvent event, final int level, final Settings settings) {
+        messageValue = settings.getString("message-value", messageValue);
         boolean cancelMessage = settings.getBool("cancel", false);
         boolean regex         = settings.getBool("regex", false);
         String  format        = settings.getString("format", "");
@@ -50,7 +53,7 @@ public class ChatTrigger implements Trigger<AsyncPlayerChatEvent> {
      */
     @Override
     public void setValues(final AsyncPlayerChatEvent event, final CastData data) {
-        data.put("api-message", event.getMessage());
+        data.put(messageValue, event.getMessage());
     }
 
     /**
