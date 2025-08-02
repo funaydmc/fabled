@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - editor
+      - dev-editor-display
 
 jobs:
   build-and-deploy:
