@@ -25,6 +25,7 @@
 package studio.magemonkey.fabled;
 
 import com.sucy.skill.SkillAPI;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -72,6 +73,7 @@ import studio.magemonkey.fabled.hook.mimic.MimicHook;
 import studio.magemonkey.fabled.listener.*;
 import studio.magemonkey.fabled.listener.attribute.AttributeListener;
 import studio.magemonkey.fabled.manager.*;
+import studio.magemonkey.fabled.shield.ShieldManager;
 import studio.magemonkey.fabled.task.CooldownTask;
 import studio.magemonkey.fabled.task.GUITask;
 import studio.magemonkey.fabled.task.ManaTask;
@@ -106,6 +108,9 @@ public class Fabled extends SkillAPI {
     private IAttributeManager   attributeManager = new NullAttributeManager();
     private AttributeProvider   fabledProvider   = null;
     private BuffProvider        buffManager      = null;
+
+    @Getter
+    private ShieldManager shieldManager;
 
     private MainThread mainThread;
     private BukkitTask manaTask;
@@ -518,6 +523,7 @@ public class Fabled extends SkillAPI {
 
         AttributeRegistry.unregisterProvider(fabledProvider);
         BuffRegistry.unregisterProvider(buffManager);
+        BuffRegistry.unregisterProvider(shieldManager);
 
         GUITool.cleanUp();
         EffectManager.cleanUp();
@@ -571,8 +577,10 @@ public class Fabled extends SkillAPI {
 
         String coreVersion = CodexEngine.getEngine().getDescription().getVersion();
         if (!DependencyRequirement.meetsVersion(DependencyRequirement.MIN_CORE_VERSION, coreVersion)) {
-            getLogger().warning("Missing required Codex version. " + coreVersion + " installed. "
-                    + DependencyRequirement.MIN_CORE_VERSION + " required. Disabling.");
+            getLogger().severe("\n\n===== [ INITIALIZATION ERROR ] =====\n"
+                    + "Missing required Codex version. "
+                    + coreVersion + " installed. "
+                    + DependencyRequirement.MIN_CORE_VERSION + " required. Disabling.\n\n");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -654,6 +662,7 @@ public class Fabled extends SkillAPI {
                     listen(new CastOffhandListener(), true);
                 }
                 case ACTION_BAR, TITLE, SUBTITLE, CHAT -> listen(new CastTextListener(settings.getCastMode()), true);
+                case WHEEL -> listen(new CastWheelListener(), true);
             }
         }
         listen(new LingeringPotionListener(), true);
@@ -698,8 +707,11 @@ public class Fabled extends SkillAPI {
 
         fabledProvider = new FabledAttributeProvider();
         AttributeRegistry.registerProvider(fabledProvider);
+
         buffManager = new BuffManager();
+        shieldManager = new ShieldManager(this);
         BuffRegistry.registerProvider(buffManager);
+        BuffRegistry.registerProvider(shieldManager);
 
         loaded = true;
     }

@@ -19,15 +19,30 @@ public class SkillCastMechanic extends MechanicComponent {
         return "skill cast";
     }
 
-    /**
-     * Executes the component
-     *
-     * @param caster  caster of the skill
-     * @param level   level of the skill
-     * @param targets targets to apply to
-     * @param force
-     * @return true if applied to something, false otherwise
-     */
+    private static void cast(LivingEntity caster, String sk, int lv, boolean force) {
+        if (sk == null || sk.isBlank()) return;
+
+        if (caster instanceof Player) {
+            PlayerData data = Fabled.getData((Player) caster);
+            if (lv <= 0)
+                lv = (data.hasSkill(sk) && data.getSkill(sk).getLevel() > 0) ? data.getSkill(sk).getLevel() : 1;
+        }
+        Skill skill = Fabled.getSkill(sk);
+        if (skill == null) {
+            Fabled.inst().getLogger().warning("Attempted to cast skill " + sk + " but it does not exist.");
+            return;
+        }
+        ((SkillShot) skill).cast(caster, lv, force);
+    }
+
+    private static int parseInt(String input) {
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException | NullPointerException e) {
+            return -1;
+        }
+    }
+
     @Override
     public boolean execute(LivingEntity caster, int level, List<LivingEntity> targets, boolean force) {
         if (targets.isEmpty()) return false;
@@ -38,10 +53,6 @@ public class SkillCastMechanic extends MechanicComponent {
         final List<String> skills     = settings.getStringList("skills");
 
         targets.forEach(target -> {
-            if (!(target instanceof Player)) return;
-            Player     player = (Player) target;
-            PlayerData data   = Fabled.getData(player);
-
             //  Split skills input into skill name and level
             List<Map.Entry<String, Integer>> handle = new ArrayList<>();
             skills.forEach(s -> {
@@ -53,35 +64,22 @@ public class SkillCastMechanic extends MechanicComponent {
             List<Map.Entry<String, Integer>> filtered = handle.stream().filter(e
                     -> Fabled.getSkill(e.getKey()) != null
                     && Fabled.getSkill(e.getKey()) instanceof SkillShot
-                    && (force_cast || (data.hasSkill(e.getKey()) && data.getSkill(e.getKey()).getLevel() > 0))
+                    && (force_cast || (!(target instanceof Player) || ( // Bypass checks if the target is not a player
+                    Fabled.getData((Player) target).hasSkill(e.getKey())
+                            && Fabled.getData((Player) target).getSkill(e.getKey()).getLevel() > 0)))
             ).collect(Collectors.toList());
             if (filtered.isEmpty()) return;
 
             //  Cast
             switch (mode) {
-                case "first" -> cast(player, filtered.get(0).getKey(), filtered.get(0).getValue(), force_cast);
-                case "all" -> handle.forEach(entry -> cast(player, entry.getKey(), entry.getValue(), force_cast));
+                case "first" -> cast(target, filtered.get(0).getKey(), filtered.get(0).getValue(), force_cast);
+                case "all" -> handle.forEach(entry -> cast(target, entry.getKey(), entry.getValue(), force_cast));
                 case "random" -> {
                     int i = Fabled.RANDOM.nextInt(filtered.size());
-                    cast(player, filtered.get(i).getKey(), filtered.get(i).getValue(), force_cast);
+                    cast(target, filtered.get(i).getKey(), filtered.get(i).getValue(), force_cast);
                 }
             }
         });
         return true;
-    }
-
-    private static int parseInt(String input) {
-        try {
-            return Integer.parseInt(input);
-        } catch (NumberFormatException | NullPointerException e) {
-            return -1;
-        }
-    }
-
-    private static void cast(Player player, String sk, int lv, boolean force) {
-        PlayerData data = Fabled.getData(player);
-        if (lv <= 0) lv = (data.hasSkill(sk) && data.getSkill(sk).getLevel() > 0) ? data.getSkill(sk).getLevel() : 1;
-        Skill skill = Fabled.getSkill(sk);
-        ((SkillShot) skill).cast(player, lv, force);
     }
 }

@@ -49,14 +49,21 @@ public class ComponentRegistry {
         register(new CrouchTrigger());
         register(new DeathTrigger());
         register(new DropItemTrigger());
+        register(new EntityResurrectTrigger());
         register(new EntityTargetTrigger());
         register(new EnvironmentalTrigger());
+        register(new ExperienceTrigger());
         register(new FishingBiteTrigger());
         register(new FishingFailTrigger());
         register(new FishingFishTrigger());
         register(new FishingGrabTrigger());
         register(new FishingGroundTrigger());
         register(new FishingReelTrigger());
+        register(new FlagTrigger());
+        register(new FlagExpireTrigger());
+        register(new FlightToggleTrigger());
+        register(new GlideTrigger());
+        register(new HarvestTrigger());
         register(new HealTrigger());
         register(new ItemSwapTrigger());
         register(new JumpTrigger());
@@ -68,11 +75,17 @@ public class ComponentRegistry {
         register(new PhysicalTakenTrigger());
         register(new ProjectileHitTrigger());
         register(new ProjectileTickTrigger());
+        register(new RiptideTrigger());
+        register(new ShearTrigger());
         register(new ShieldTrigger());
+        register(new SkillUpgradeTrigger());
+        register(new SkillDowngradeTrigger());
         register(new SignalTrigger());
+        register(new SprintTrigger());
         register(new SkillCastTrigger());
         register(new SkillDealtTrigger());
         register(new SkillTakenTrigger());
+        register(new StripLogTrigger());
         register(new WorldChangeTrigger());
 
         // Targets
@@ -91,6 +104,7 @@ public class ComponentRegistry {
         register(new AirCondition());
         register(new AltitudeCondition());
         register(new ArmorCondition());
+        register(new AttackIndicatorCondition());
         register(new AttributeCondition());
         register(new BiomeCondition());
         register(new BlockCondition());
@@ -112,6 +126,7 @@ public class ComponentRegistry {
         register(new FireCondition());
         register(new FlagCondition());
         register(new FoodCondition());
+        register(new GlideCondition());
         register(new GroundCondition());
         register(new HealthCondition());
         register(new InventoryCondition());
@@ -191,6 +206,7 @@ public class ComponentRegistry {
         register(new MineMechanic());
         register(new MoneyMechanic());
         register(new MountMechanic());
+        register(new MythicMobSkill());
         register(new ParticleAnimationMechanic());
         register(new ParticleEffectMechanic());
         register(new ParticleImageMechanic());
@@ -205,6 +221,7 @@ public class ComponentRegistry {
         register(new PushMechanic());
         register(new RememberTargetsMechanic());
         register(new RepeatMechanic());
+        register(new ShieldMechanic());
         register(new SignalEmitMechanic());
         register(new SkillCastMechanic());
         register(new SoundMechanic());
@@ -225,6 +242,7 @@ public class ComponentRegistry {
         register(new ValueLoreMechanic());
         register(new ValueLoreSlotMechanic());
         register(new ValueManaMechanic());
+        register(new ValueMathMechanic());
         register(new ValueMultiplyMechanic());
         register(new ValuePlaceholderMechanic());
         register(new ValueRandomMechanic());
@@ -354,7 +372,7 @@ public class ComponentRegistry {
         builder.append("]},");
     }
 
-    private static void register(final EffectComponent component) {
+    public static void register(final EffectComponent component) {
         COMPONENTS.computeIfAbsent(component.getType(), t -> new HashMap<>())
                 .put(component.getKey().toLowerCase(), component.getClass());
     }

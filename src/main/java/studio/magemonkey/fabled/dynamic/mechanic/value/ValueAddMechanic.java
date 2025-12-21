@@ -38,6 +38,7 @@ import java.util.List;
 /**
  * Adds to a cast data value
  */
+@Deprecated
 public class ValueAddMechanic extends MechanicComponent {
     private static final String KEY    = "key";
     private static final String AMOUNT = "amount";
@@ -48,15 +49,6 @@ public class ValueAddMechanic extends MechanicComponent {
         return "value add";
     }
 
-    /**
-     * Executes the component
-     *
-     * @param caster  caster of the skill
-     * @param level   level of the skill
-     * @param targets targets to apply to
-     * @param force
-     * @return true if applied to something, false otherwise
-     */
     @Override
     public boolean execute(LivingEntity caster, int level, List<LivingEntity> targets, boolean force) {
         if (targets.isEmpty() || !settings.has(KEY)) {

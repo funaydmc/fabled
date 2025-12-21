@@ -1,6 +1,5 @@
 package studio.magemonkey.fabled.util;
 
-import io.lumine.mythic.bukkit.utils.interfaces.TriFunction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +18,7 @@ import studio.magemonkey.fabled.api.player.PlayerSkill;
 import studio.magemonkey.fabled.api.skills.Skill;
 import studio.magemonkey.fabled.api.util.FlagData;
 import studio.magemonkey.fabled.api.util.FlagManager;
+import studio.magemonkey.fabled.cast.PlayerCastWheel;
 import studio.magemonkey.fabled.cast.PlayerTextCastingData;
 import studio.magemonkey.fabled.dynamic.DynamicSkill;
 import studio.magemonkey.fabled.hook.PlaceholderAPIHook;
@@ -30,11 +30,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PlaceholderUtil {
+interface PlaceholderFunction<T, U, V, R> {
+    R apply(T t, U u, V v);
+}
 
-    private static       long                                                                   legacyMessageTime;
-    private static final Map<String, TriFunction<OfflinePlayer, List<String>, Integer, String>> actions =
+public class PlaceholderUtil {
+    private static final Map<String, PlaceholderFunction<OfflinePlayer, List<String>, Integer, String>> actions =
             new HashMap<>();
+
+    private static long legacyMessageTime;
 
     static {
         // Class Placeholders
@@ -154,7 +158,7 @@ public class PlaceholderUtil {
     }
 
     public static String replace(OfflinePlayer player, String identifier) {
-        List<String> arguments   = new ArrayList<>(Arrays.asList(identifier.toLowerCase().strip().split("_")));
+        List<String> arguments   = new ArrayList<>(Arrays.asList(identifier.strip().split("_")));
         String       placeholder = arguments.remove(0);
         return actions.getOrDefault(placeholder, (a, b, c) -> {
 
@@ -860,24 +864,20 @@ public class PlaceholderUtil {
         }
     }
 
-    private static String getSkills(OfflinePlayer player, List<String> arguments, Integer accountId) {
-        try {
-            PlayerData   playerData = getPlayerData(player, accountId);
-            List<String> skills     = new ArrayList<>();
-            for (PlayerSkill skill : playerData.getSkills()) {
-                skills.add(skill.getData().getName());
-            }
-            Collections.sort(skills);
-            return skills.toString();
-        } catch (Exception e) {
-            return "[]";
+    private static List<String> getSkills(OfflinePlayer player, List<String> arguments, Integer accountId) {
+        PlayerData   playerData = getPlayerData(player, accountId);
+        List<String> skills     = new ArrayList<>();
+        for (PlayerSkill skill : playerData.getSkills()) {
+            skills.add(skill.getData().getName());
         }
+        Collections.sort(skills);
+        return skills;
     }
 
     // Returns a list of all the skills a player current has. [] if not found.
     private static String skillsPlaceholder(OfflinePlayer player, List<String> arguments, Integer accountId) {
         try {
-            return getSkills(player, arguments, accountId);
+            return getSkills(player, arguments, accountId).toString();
         } catch (Exception e) {
             return "[]";
         }
@@ -886,7 +886,7 @@ public class PlaceholderUtil {
     // Returns a list of all the skills a player current has. "" if not found.
     private static String formatSkillsPlaceholder(OfflinePlayer player, List<String> arguments, Integer accountId) {
         try {
-            return getSkills(player, arguments, accountId).replaceAll("(^\\[|\\]$)", "");
+            return getSkills(player, arguments, accountId).toString().replaceAll("(^\\[|\\]$)", "");
         } catch (Exception e) {
             return "";
         }
@@ -895,9 +895,7 @@ public class PlaceholderUtil {
     // Returns the name of a skill at the specified location. "" if not found.
     private static String skillsNamePlaceholder(OfflinePlayer player, List<String> arguments, Integer accountId) {
         try {
-            PlayerData playerData = getPlayerData(player, accountId);
-            return playerData.getSkills().toArray(new PlayerSkill[0])[Integer.parseInt(arguments.remove(0))
-                    - 1].getData().getName();
+            return getSkills(player, arguments, accountId).get(Integer.parseInt(arguments.remove(0)) - 1);
         } catch (Exception e) {
             return "";
         }
@@ -906,10 +904,7 @@ public class PlaceholderUtil {
     // Returns the information of a skill at the specified location and given placeholder. "" if not found.
     private static String skillsInfoPlaceholder(OfflinePlayer player, List<String> arguments, Integer accountId) {
         try {
-            PlayerData playerData = getPlayerData(player, accountId);
-            String skillName = playerData.getSkills().toArray(new PlayerSkill[0])[Integer.parseInt(arguments.remove(0))
-                    - 1].getData().getName();
-            arguments.add(skillName);
+            arguments.add(getSkills(player, arguments, accountId).get(Integer.parseInt(arguments.remove(0)) - 1));
             return actions.getOrDefault(arguments.remove(0), (a, b, c) -> null).apply(player, arguments, accountId);
         } catch (Exception e) {
             return "";
@@ -920,8 +915,9 @@ public class PlaceholderUtil {
     private static String castingPlaceholder(OfflinePlayer player, List<String> arguments, Integer accountId) {
         try {
             PlayerData            playerData = getPlayerData(player, accountId);
-            PlayerTextCastingData skillData  = playerData.getTextCastingData();
-            return String.valueOf(skillData.isCasting());
+            PlayerTextCastingData textData   = playerData.getTextCastingData();
+            PlayerCastWheel       wheelData  = playerData.getCastWheel();
+            return String.valueOf(textData.isCasting() || wheelData.isCasting());
         } catch (Exception e) {
             return "false";
         }

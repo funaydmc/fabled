@@ -42,7 +42,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import studio.magemonkey.codex.mccore.config.CommentedConfig;
 import studio.magemonkey.codex.mccore.config.parse.DataSection;
 import studio.magemonkey.codex.mccore.config.parse.NumberParser;
-import studio.magemonkey.codex.mccore.util.TextFormatter;
+import studio.magemonkey.codex.util.StringUT;
 import studio.magemonkey.fabled.Fabled;
 import studio.magemonkey.fabled.api.CombatProtection;
 import studio.magemonkey.fabled.api.DefaultCombatProtection;
@@ -83,84 +83,109 @@ public class Settings extends com.sucy.skill.data.Settings {
             GUI_FADEO                    = GUI_BASE + "title-fade-out",
             GUI_LIST                     = GUI_BASE + "title-messages",
 
-    DEFAULT_YIELD                  = "default",
-            ACCOUNT_BASE           = "Accounts.",
-            ACCOUNT_MAIN           = ACCOUNT_BASE + "main-class-group",
-            ACCOUNT_SHARED_SP      = ACCOUNT_BASE + "shared-skill-points",
-            ACCOUNT_EACH           = ACCOUNT_BASE + "one-per-class",
-            ACCOUNT_MAX            = ACCOUNT_BASE + "max-accounts",
-            ACCOUNT_PERM           = ACCOUNT_BASE + "perm-accounts",
-            TARGET_BASE            = "Targeting.",
-            TARGET_MONSTER         = TARGET_BASE + "monsters-enemy",
-            TARGET_PASSIVE         = TARGET_BASE + "passive-ally",
-            TARGET_PLAYER          = TARGET_BASE + "player-ally",
-            TARGET_NPC             = TARGET_BASE + "affect-npcs",
-            TARGET_STANDS          = TARGET_BASE + "affect-armor-stands",
-            SAVE_BASE              = "Saving.",
-            SAVE_AUTO              = SAVE_BASE + "auto-save",
-            SAVE_MINS              = SAVE_BASE + "minutes",
-            SAVE_SQL               = SAVE_BASE + "sql-database",
-            SAVE_SQLD              = SAVE_BASE + "sql-details",
-            CLASS_BASE             = "Classes.",
-            CLASS_MODIFY           = CLASS_BASE + "modify-health",
-            CLASS_HP               = CLASS_BASE + "classless-hp",
-            CLASS_SHOW             = CLASS_BASE + "show-auto-skills",
-            CLASS_ATTRIB           = CLASS_BASE + "attributes-enabled",
-            CLASS_REFUND           = CLASS_BASE + "attributes-downgrade",
-            CLASS_REFUND_PRICE     = CLASS_BASE + "attributes-downgrade-price",
-            CLASS_LEVEL            = CLASS_BASE + "level-up-skill",
-            MANA_BASE              = "Mana.",
-            MANA_ENABLED           = MANA_BASE + "enabled",
-            MANA_FREQ              = MANA_BASE + "freq",
-            SKILL_BASE             = "Skills.",
+    DEFAULT_YIELD             = "default",
+            ACCOUNT_BASE      = "Accounts.",
+            ACCOUNT_MAIN      = ACCOUNT_BASE + "main-class-group",
+            ACCOUNT_SHARED_SP = ACCOUNT_BASE + "shared-skill-points",
+            ACCOUNT_EACH      = ACCOUNT_BASE + "one-per-class",
+            ACCOUNT_MAX       = ACCOUNT_BASE + "max-accounts",
+            ACCOUNT_PERM      = ACCOUNT_BASE + "perm-accounts",
+
+    TARGET_BASE            = "Targeting.",
+            TARGET_MONSTER = TARGET_BASE + "monsters-enemy",
+            TARGET_PASSIVE = TARGET_BASE + "passive-ally",
+            TARGET_PLAYER  = TARGET_BASE + "player-ally",
+            TARGET_NPC     = TARGET_BASE + "affect-npcs",
+            TARGET_STANDS  = TARGET_BASE + "affect-armor-stands",
+
+    SAVE_BASE         = "Saving.",
+            SAVE_AUTO = SAVE_BASE + "auto-save",
+            SAVE_MINS = SAVE_BASE + "minutes",
+            SAVE_SQL  = SAVE_BASE + "sql-database",
+            SAVE_SQLD = SAVE_BASE + "sql-details",
+
+    CLASS_BASE                 = "Classes.",
+            CLASS_MODIFY       = CLASS_BASE + "modify-health",
+            CLASS_HP           = CLASS_BASE + "classless-hp",
+            CLASS_SHOW         = CLASS_BASE + "show-auto-skills",
+            CLASS_ATTRIB       = CLASS_BASE + "attributes-enabled",
+            CLASS_REFUND       = CLASS_BASE + "attributes-downgrade",
+            CLASS_REFUND_PRICE = CLASS_BASE + "attributes-downgrade-price",
+            CLASS_LEVEL        = CLASS_BASE + "level-up-skill",
+
+    MANA_BASE            = "Mana.",
+            MANA_ENABLED = MANA_BASE + "enabled",
+            MANA_FREQ    = MANA_BASE + "freq",
+
+    SKILL_BASE                     = "Skills.",
             SKILL_DOWNGRADE        = SKILL_BASE + "allow-downgrade",
             SKILL_MESSAGE          = SKILL_BASE + "show-messages",
             SKILL_RADIUS           = SKILL_BASE + "message-radius",
             SKILL_BLOCKS           = SKILL_BASE + "block-filter",
             SKILL_KNOCKBACK        = SKILL_BASE + "knockback-no-damage",
             SKILL_REFUND_ON_CHANGE = SKILL_BASE + "refund-on-change",
-            ITEM_BASE              = "Items.",
-            ITEM_LORE              = ITEM_BASE + "lore-requirements",
-            ITEM_DROP              = ITEM_BASE + "drop-weapon",
-            ITEM_SKILLS            = ITEM_BASE + "skill-requirements",
-            ITEM_ATTRIBS           = ITEM_BASE + "lore-attributes",
-            ITEM_CLASS             = ITEM_BASE + "lore-class-text",
-            ITEM_SKILL             = ITEM_BASE + "lore-skill-text",
-            ITEM_LEVEL             = ITEM_BASE + "lore-level-text",
-            ITEM_EXCLUDE           = ITEM_BASE + "lore-exclude-text",
-            ITEM_ATTR              = ITEM_BASE + "lore-attribute-text",
-            ITEM_STATS             = ITEM_BASE + "attribute-text",
-            ITEM_SLOTS             = ITEM_BASE + "slots",
-            PVP_BASE               = "PVP.",
-            PVP_MIN_LEVEL          = PVP_BASE + "min-level",
-            PVP_LEVEL_RANGE        = PVP_BASE + "level-range",
-            CAST_BASE              = "Casting.",
-            CAST_ENABLED           = CAST_BASE + "enabled",
-            CAST_MODE              = CAST_BASE + "mode",
-            CAST_SLOT              = CAST_BASE + "slot",
-            CAST_ITEM              = CAST_BASE + "item",
-            CAST_COOLDOWN          = CAST_BASE + "cooldown",
-            CAST_HOVER             = CAST_BASE + "hover-item",
-            CAST_INSTANT           = CAST_BASE + "instant-item",
-            CAST_FORMAT_SKILL      = CAST_BASE + "message-mode-format.skill",
-            CAST_FORMAT_SEPARATOR  = CAST_BASE + "message-mode-format.separator",
-            INTERACT_BASE          = "Interaction",
-            INTERACT_CLICK         = INTERACT_BASE + ".interact-is-right-click",
-            ANIMATION_LEFT_CLICK   = INTERACT_BASE + ".animation-is-left-click",
-            COMBO_BASE             = "Click Combos.",
-            COMBO_ENABLED          = COMBO_BASE + "enabled",
-            COMBO_CUSTOM           = COMBO_BASE + "allow-custom",
-            COMBO_CLICK            = COMBO_BASE + "use-click-",
-            COMBO_SIZE             = COMBO_BASE + "combo-size",
-            COMBO_TIME             = COMBO_BASE + "click-time",
-            COMBO_AUTO             = COMBO_BASE + "auto-assign",
-            EXP_BASE               = "Experience.",
-            WORLD_BASE             = "Worlds.",
-            WORLD_ENABLE           = WORLD_BASE + "enable",
-            WORLD_TYPE             = WORLD_BASE + "use-as-enabling",
-            WORLD_LIST             = WORLD_BASE + "worlds",
-            WG_SKILLS              = "disable-skills",
-            WG_EXP                 = "disable-exp";
+
+    ITEM_BASE            = "Items.",
+            ITEM_LORE    = ITEM_BASE + "lore-requirements",
+            ITEM_DROP    = ITEM_BASE + "drop-weapon",
+            ITEM_SKILLS  = ITEM_BASE + "skill-requirements",
+            ITEM_ATTRIBS = ITEM_BASE + "lore-attributes",
+            ITEM_CLASS   = ITEM_BASE + "lore-class-text",
+            ITEM_SKILL   = ITEM_BASE + "lore-skill-text",
+            ITEM_LEVEL   = ITEM_BASE + "lore-level-text",
+            ITEM_EXCLUDE = ITEM_BASE + "lore-exclude-text",
+            ITEM_ATTR    = ITEM_BASE + "lore-attribute-text",
+            ITEM_STATS   = ITEM_BASE + "attribute-text",
+            ITEM_SLOTS   = ITEM_BASE + "slots",
+
+    PVP_BASE                = "PVP.",
+            PVP_MIN_LEVEL   = PVP_BASE + "min-level",
+            PVP_LEVEL_RANGE = PVP_BASE + "level-range",
+
+    CAST_BASE                                      = "Casting.",
+            CAST_ENABLED                           = CAST_BASE + "enabled",
+            CAST_MODE                              = CAST_BASE + "mode",
+            CAST_SLOT                              = CAST_BASE + "slot",
+            CAST_ITEM                              = CAST_BASE + "item",
+            CAST_COOLDOWN                          = CAST_BASE + "cooldown",
+            CAST_HOVER                             = CAST_BASE + "hover-item",
+            CAST_INSTANT                           = CAST_BASE + "instant-item",
+            CAST_FORMAT_SKILL                      = CAST_BASE + "message-mode-format.skill",
+            CAST_FORMAT_SEPARATOR                  = CAST_BASE + "message-mode-format.separator",
+            CAST_FORMAT_WHEEL_SELECTED_SKILL       = CAST_BASE + "wheel.selected-skill",
+            CAST_FORMAT_WHEEL_UNSELECTED_SKILL     = CAST_BASE + "wheel.unselected-skill",
+            CAST_FORMAT_WHEEL_PREVIOUS_SEPARATOR   = CAST_BASE + "wheel.previous-separator",
+            CAST_FORMAT_WHEEL_NEXT_SEPARATOR       = CAST_BASE + "wheel.next-separator",
+            CAST_FORMAT_WHEEL_SNEAK_TO_OFFHAND     = CAST_BASE + "wheel.sneak-to-offhand",
+            CAST_FORMAT_WHEEL_SNEAK_TO_SCROLL      = CAST_BASE + "wheel.sneak-to-scroll",
+            CAST_FORMAT_WHEEL_SOUNDS_START_CASTING = CAST_BASE + "wheel.sounds.start-casting",
+            CAST_FORMAT_WHEEL_SOUNDS_STOP_CASTING  = CAST_BASE + "wheel.sounds.stop-casting",
+            CAST_FORMAT_WHEEL_SOUNDS_SCROLL        = CAST_BASE + "wheel.sounds.scroll",
+            CAST_FORMAT_WHEEL_SOUNDS_VOLUME        = CAST_BASE + "wheel.sounds.volume",
+            CAST_FORMAT_WHEEL_CAST_KEY             = CAST_BASE + "wheel.cast-key",
+
+
+    INTERACT_BASE                = "Interaction",
+            INTERACT_CLICK       = INTERACT_BASE + ".interact-is-right-click",
+            ANIMATION_LEFT_CLICK = INTERACT_BASE + ".animation-is-left-click",
+
+    COMBO_BASE            = "Click Combos.",
+            COMBO_ENABLED = COMBO_BASE + "enabled",
+            COMBO_CUSTOM  = COMBO_BASE + "allow-custom",
+            COMBO_CLICK   = COMBO_BASE + "use-click-",
+            COMBO_SIZE    = COMBO_BASE + "combo-size",
+            COMBO_TIME    = COMBO_BASE + "click-time",
+            COMBO_AUTO    = COMBO_BASE + "auto-assign",
+
+    EXP_BASE = "Experience.",
+
+    WORLD_BASE           = "Worlds.",
+            WORLD_ENABLE = WORLD_BASE + "enable",
+            WORLD_TYPE   = WORLD_BASE + "use-as-enabling",
+            WORLD_LIST   = WORLD_BASE + "worlds",
+
+    WG_SKILLS      = "disable-skills",
+            WG_EXP = "disable-exp";
 
     private final HashMap<String, Double>        yields           = new HashMap<>();
     private final HashMap<String, GroupSettings> groups           = new HashMap<>();
@@ -421,73 +446,73 @@ public class Settings extends com.sucy.skill.data.Settings {
     private String              skillPre, skillPost;
     private String attrReqPre, attrReqPost;
     private String attrPre, attrPost;
-    private List<String>  titleMessages;
+    private List<String> titleMessages;
     /**
      * Checks whether old health bars (fixed 10 hearts) are enabled
      *
      * @return true if enabled, false otherwise
      */
     @Getter
-    private boolean       oldHealth;
+    private boolean      oldHealth;
     /**
      * Whether health less than 10 hearts should be scaled down instead of filling the full 10 hearts.
      *
      * @return true if hearts should be allowed to be less than 10
      */
     @Getter
-    private boolean       downScaling;
+    private boolean      downScaling;
     /**
      * @return true if forces the Fabled health scaling, false otherwise
      */
     @Getter
-    private boolean       forceScaling;
+    private boolean      forceScaling;
     /**
      * Gets the setting for using the level bar
      *
      * @return level bar setting
      */
     @Getter
-    private String        levelBar;
+    private String       levelBar;
     /**
      * Gets the setting for using the food bar
      *
      * @return food bar setting
      */
     @Getter
-    private String        foodBar;
+    private String       foodBar;
     @Getter
-    private boolean       blockSaturation;
+    private boolean      blockSaturation;
     /**
      * @return boolean whether classes should be refunded their skill points on changing.
      */
     @Getter
-    private boolean       refundOnClassChange;
+    private boolean      refundOnClassChange;
     /**
      * @return text shown alongside the class level
      */
     @Getter
-    private String        levelText;
+    private String       levelText;
     /**
      * Checks whether the action bar is being used
      *
      * @return true if used, false otherwise
      */
     @Getter
-    private boolean       useActionBar;
+    private boolean      useActionBar;
     /**
      * Gets the text to display on the action bar
      *
      * @return action bar text
      */
     @Getter
-    private String        actionText;
+    private String       actionText;
     /**
      * Checks whether the stats scoreboard is to be shown
      *
      * @return true if shown, false otherwise
      */
     @Getter
-    private boolean       showScoreboard;
+    private boolean      showScoreboard;
     /**
      * Checks whether a player's class name is to be
      * shown next to their name
@@ -495,7 +520,7 @@ public class Settings extends com.sucy.skill.data.Settings {
      * @return true if shown, false otherwise
      */
     @Getter
-    private boolean       showClassName;
+    private boolean      showClassName;
     /**
      * Checks whether a player's class level is to be
      * shown below their name
@@ -503,67 +528,90 @@ public class Settings extends com.sucy.skill.data.Settings {
      * @return true if shown, false otherwise
      */
     @Getter
-    private boolean       showClassLevel;
+    private boolean      showClassLevel;
     @Getter
-    private boolean       showBinds;
+    private boolean      showBinds;
     @Getter
-    private String        bindText;
-    private boolean       useTitle;
+    private String       bindText;
+    private boolean      useTitle;
     /**
      * @return duration of the title display in ticks
      */
     @Getter
-    private int           titleDuration;
+    private int          titleDuration;
     /**
      * @return fade in time of the title display in ticks
      */
     @Getter
-    private int           titleFadeIn;
+    private int          titleFadeIn;
     /**
      * @return fade out time of the title display in ticks
      */
     @Getter
-    private int           titleFadeOut;
+    private int          titleFadeOut;
     /**
      * @return the maximum level difference two players must have to be able to PVP, or -1 if disabled
      */
     @Getter
-    private int           pvpLevelRange;
+    private int          pvpLevelRange;
     /**
      * @return the minimum level the player must be to be able to PVP with other players, or -1 if disabled
      */
     @Getter
-    private int           pvpMinLevel;
+    private int          pvpMinLevel;
     /**
      * @return true if default casting is enabled
      */
     @Getter
-    private boolean       castEnabled;
+    private boolean      castEnabled;
     /**
      *
      */
     @Getter
-    private CastMode      castMode;
+    private CastMode     castMode;
     /**
      * @return slot the cast item is stored in
      */
     @Getter
-    private int           castSlot;
+    private int          castSlot;
     /**
      * @return global cooldown for casting
      */
     @Getter
-    private long          castCooldown;
+    private long         castCooldown;
     /**
      * @return cast item to use in the slot
      */
-    private ItemStack     castItem;
-    private ItemStack     hoverItem;
-    private ItemStack     instantItem;
+    private ItemStack    castItem;
+    private ItemStack    hoverItem;
+    private ItemStack    instantItem;
     @Getter
-    private String        messageFormatSkill;
+    private String       messageFormatSkill;
     @Getter
-    private String        messageFormatSeparator;
+    private String       messageFormatSeparator;
+    @Getter
+    private String       wheelFormatSelectedSkill;
+    @Getter
+    private String       wheelFormatUnselectedSkill;
+    @Getter
+    private String       wheelFormatPreviousSeparator;
+    @Getter
+    private String       wheelFormatNextSeparator;
+    @Getter
+    private boolean      wheelSneakToOffhand;
+    @Getter
+    private boolean      wheelSneakToScroll;
+    @Getter
+    private String       wheelSoundsStartCasting;
+    @Getter
+    private String       wheelSoundsStopCasting;
+    @Getter
+    private String       wheelSoundsScroll;
+    @Getter
+    private int          wheelSoundsVolume;
+    @Getter
+    private String       wheelCastKey;
+
     /**
      * @return enabled clicks as an array of booleans indexed by click ID
      */
@@ -947,7 +995,8 @@ public class Settings extends com.sucy.skill.data.Settings {
      * @return true if an ally, false otherwise
      */
     public boolean isAlly(LivingEntity attacker, LivingEntity target) {
-        return !canAttack(attacker, target);
+        return !canAttack(attacker, target) || (target instanceof Wolf && ((Wolf) target).isTamed()
+                && (attacker.equals(((Wolf) target).getOwner())));
     }
 
     /**
@@ -1165,7 +1214,7 @@ public class Settings extends com.sucy.skill.data.Settings {
         downScaling = config.getBoolean(GUI_DOWNSCALE);
         forceScaling = config.getBoolean(GUI_FORCE);
         levelBar = config.getString(GUI_LVLBAR);
-        levelText = TextFormatter.colorString(config.getString(GUI_LVLTXT, "Level"));
+        levelText = StringUT.color(config.getString(GUI_LVLTXT, "Level"));
         foodBar = config.getString(GUI_FOOD);
         blockSaturation = config.getBoolean(GUI_SATURATION, true);
         useActionBar = config.getBoolean(GUI_ACTION);
@@ -1214,6 +1263,19 @@ public class Settings extends com.sucy.skill.data.Settings {
         instantItem = GUITool.markCastItem(GUITool.parseItem(config.getSection(CAST_INSTANT)));
         messageFormatSkill = config.getString(CAST_FORMAT_SKILL, "&6[%number%] &a%skill%");
         messageFormatSeparator = config.getString(CAST_FORMAT_SEPARATOR, "&7 - ");
+        wheelFormatSelectedSkill = config.getString(CAST_FORMAT_WHEEL_SELECTED_SKILL, "&6[%number%] &a%skill%");
+        wheelFormatUnselectedSkill = config.getString(CAST_FORMAT_WHEEL_UNSELECTED_SKILL, "&6[%number%] &a%skill%");
+        wheelFormatPreviousSeparator = config.getString(CAST_FORMAT_WHEEL_PREVIOUS_SEPARATOR, "&7<-");
+        wheelFormatNextSeparator = config.getString(CAST_FORMAT_WHEEL_NEXT_SEPARATOR, "&7->");
+        wheelSneakToOffhand = config.getBoolean(CAST_FORMAT_WHEEL_SNEAK_TO_OFFHAND, true);
+        wheelSneakToScroll = config.getBoolean(CAST_FORMAT_WHEEL_SNEAK_TO_SCROLL, true);
+        wheelSoundsStartCasting = config.getString(CAST_FORMAT_WHEEL_SOUNDS_START_CASTING, "None");
+        wheelSoundsStopCasting = config.getString(CAST_FORMAT_WHEEL_SOUNDS_STOP_CASTING, "None");
+        wheelSoundsScroll = config.getString(CAST_FORMAT_WHEEL_SOUNDS_SCROLL, "None");
+        wheelSoundsVolume = config.getInt(CAST_FORMAT_WHEEL_SOUNDS_VOLUME, 100);
+        wheelCastKey = config.getString(CAST_FORMAT_WHEEL_CAST_KEY, "LEFT_CLICK");
+
+
         castEnabled = castEnabled && castItem != null;
     }
 
@@ -1348,11 +1410,11 @@ public class Settings extends com.sucy.skill.data.Settings {
             }
 
             if (icon.isList("text")) {
-                List<String> format = TextFormatter.colorStringList(icon.getList("text"));
+                List<String> format = StringUT.color(icon.getList("text"));
                 meta.setDisplayName(format.remove(0));
                 meta.setLore(format);
             } else {
-                meta.setDisplayName(TextFormatter.colorString(icon.getString("text", "&7Unassigned")));
+                meta.setDisplayName(StringUT.color(icon.getString("text", "&7Unassigned")));
             }
 
             if (meta instanceof Damageable) {

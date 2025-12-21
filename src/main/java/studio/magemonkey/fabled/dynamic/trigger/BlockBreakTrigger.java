@@ -53,7 +53,6 @@ public class BlockBreakTrigger implements Trigger<BlockBreakEvent> {
         data.put(blockTypeValue, event.getBlock().getType().name());
         data.put(blockLocValue, event.getBlock().getLocation());
     }
-
     /**
      * {@inheritDoc}
      */

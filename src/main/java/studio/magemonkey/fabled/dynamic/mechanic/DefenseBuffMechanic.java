@@ -37,43 +37,35 @@ import java.util.List;
  * Applies a flag to each target
  */
 public class DefenseBuffMechanic extends MechanicComponent {
-    private static final String TYPE    = "type";
-    private static final String SKILL   = "skill";
-    private static final String VALUE   = "value";
-    private static final String SECONDS = "seconds";
+    private static final String TYPE           = "type";
+    private static final String SKILL          = "skill";
+    private static final String VALUE          = "value";
+    private static final String SECONDS        = "seconds";
+    private static final String CLASSIFICATION = "classification";
 
     @Override
     public String getKey() {
         return "defense buff";
     }
 
-    /**
-     * Executes the component
-     *
-     * @param caster  caster of the skill
-     * @param level   level of the skill
-     * @param targets targets to apply to
-     * @param force
-     * @return true if applied to something, false otherwise
-     */
     @Override
     public boolean execute(LivingEntity caster, int level, List<LivingEntity> targets, boolean force) {
-        if (targets.size() == 0) {
+        if (targets.isEmpty()) {
             return false;
         }
 
         boolean skill   = settings.getString(SKILL, "false").equalsIgnoreCase("true");
-        boolean percent = settings.getString(TYPE, "flat").toLowerCase().equals("multiplier");
+        boolean percent = settings.getString(TYPE, "flat").equalsIgnoreCase("multiplier");
         double  value   = parseValues(caster, VALUE, level, 1.0);
         double  seconds = parseValues(caster, SECONDS, level, 3.0);
         int     ticks   = (int) (seconds * 20);
         for (LivingEntity target : targets) {
-            BuffManager.addBuff(
-                    target,
-                    skill ? BuffType.SKILL_DEFENSE : BuffType.DEFENSE,
+            BuffManager.getBuffData(target, true).addBuff(
+                    (skill ? BuffType.SKILL_DEFENSE : BuffType.DEFENSE).getLocalizedName(),
+                    skill ? settings.getString(CLASSIFICATION, "default") : null,
                     new Buff(this.skill.getName(), value, percent),
                     ticks);
         }
-        return targets.size() > 0;
+        return !targets.isEmpty();
     }
 }

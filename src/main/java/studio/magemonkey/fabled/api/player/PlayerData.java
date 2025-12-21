@@ -60,6 +60,7 @@ import studio.magemonkey.fabled.api.skills.SkillShot;
 import studio.magemonkey.fabled.api.skills.TargetSkill;
 import studio.magemonkey.fabled.api.target.TargetHelper;
 import studio.magemonkey.fabled.cast.PlayerCastBars;
+import studio.magemonkey.fabled.cast.PlayerCastWheel;
 import studio.magemonkey.fabled.cast.PlayerTextCastingData;
 import studio.magemonkey.fabled.data.GroupSettings;
 import studio.magemonkey.fabled.data.PlayerEquips;
@@ -118,6 +119,7 @@ public class PlayerData {
     private       PlayerSkillBar                             skillBar;
     private       PlayerCastBars                             castBars;
     private       PlayerTextCastingData                      textCastingData;
+    private       PlayerCastWheel                            castWheel;
     /**
      * The data for the player's combos
      *
@@ -267,6 +269,14 @@ public class PlayerData {
     public PlayerTextCastingData getTextCastingData() {
         if (textCastingData == null) textCastingData = new PlayerTextCastingData(this);
         return textCastingData;
+    }
+
+    /**
+     * @return cast wheel data for the player
+     */
+    public PlayerCastWheel getCastWheel() {
+        if (castWheel == null) castWheel = new PlayerCastWheel(this);
+        return castWheel;
     }
 
     public int subtractHungerValue(final double amount) {
@@ -1791,10 +1801,12 @@ public class PlayerData {
      *
      * @param amount  percent of experience to lose
      * @param percent whether to take the amount as a percentage
+     * @param changeLevel whether to change the level of the player
+     * @param showMessage whether to show the configured message if enabled
      */
-    public void loseExp(double amount, boolean percent, boolean changeLevel) {
+    public void loseExp(double amount, boolean percent, boolean changeLevel, boolean showMessage) {
         for (PlayerClass playerClass : classes.values()) {
-            playerClass.loseExp(amount, percent, changeLevel);
+            playerClass.loseExp(amount, percent, changeLevel, showMessage);
         }
     }
 
@@ -1806,6 +1818,19 @@ public class PlayerData {
             double penalty = playerClass.getData().getGroupSettings().getDeathPenalty();
             if (penalty > 0) {
                 playerClass.loseExp(penalty);
+            }
+        }
+    }
+
+    public void setExp(double amount, ExpSource expSource, boolean showMessage) {
+        for (PlayerClass playerClass : classes.values()) {
+            // We want to use lose/giveExp to trigger the event and change their level,
+            // so we need to calculate the difference
+            double diff = amount - playerClass.getExp();
+            if (diff > 0) {
+                playerClass.giveExp(diff, expSource, showMessage);
+            } else {
+                playerClass.loseExp(-diff, false, true, showMessage);
             }
         }
     }
@@ -1840,8 +1865,23 @@ public class PlayerData {
      */
     public void loseLevels(int amount) {
         classes.values().stream()
-                .filter(playerClass -> amount > 0)
                 .forEach(playerClass -> playerClass.loseLevels(amount));
+    }
+
+    public boolean setLevel(int amount, ExpSource source) {
+        boolean success = true;
+
+        for (PlayerClass playerClass : classes.values()) {
+            int diff = amount - playerClass.getLevel();
+
+            if (diff > 0) {
+                success = success && giveLevels(diff, source);
+            } else if (diff < 0) {
+                loseLevels(-diff);
+            }
+        }
+
+        return success;
     }
 
     public int getPoints() {
@@ -2101,8 +2141,8 @@ public class PlayerData {
      * @param player the player
      */
     public void updateWalkSpeed(Player player) {
-
         float level = (float) (this.scaleStat(AttributeManager.MOVE_SPEED, 0.2f, 0D, Double.MAX_VALUE));
+
         try {
             player.setWalkSpeed(level);
         } catch (IllegalArgumentException e) {

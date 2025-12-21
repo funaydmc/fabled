@@ -30,7 +30,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -50,11 +49,8 @@ import java.util.function.Supplier;
 public class NearestTarget extends TargetComponent {
     private static final String RADIUS = "radius";
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    List<LivingEntity> getTargets(
+    public List<LivingEntity> getTargets(
             final LivingEntity caster, final int level, final List<LivingEntity> targets) {
 
         final double             radius = parseValues(caster, RADIUS, level, 3.0);
@@ -62,6 +58,8 @@ public class NearestTarget extends TargetComponent {
         for (LivingEntity target : targets) {
             final Comparator<LivingEntity> comparator = new DistanceComparator(target.getLocation());
             Nearby.getLivingNearby(target, radius).stream()
+                    .filter(e -> isValidTarget(caster, target, e) || (self.equals(IncludeCaster.IN_AREA)
+                            && caster.equals(e)))
                     .min(comparator)
                     .ifPresent(e -> {
                         GameMode gm = e instanceof Player ? ((Player) e).getGameMode() : GameMode.SURVIVAL;
@@ -118,7 +116,7 @@ public class NearestTarget extends TargetComponent {
                         }
                     }
                 }
-            }.runTaskTimer((Plugin) Fabled.inst(), 0, Math.max(1, preview.getInt("circle-" + "period", 5)));
+            }.runTaskTimer(Fabled.inst(), 0, Math.max(1, preview.getInt("circle-" + "period", 5)));
             onPreviewStop.add(task::cancel);
         }
 
@@ -177,7 +175,7 @@ public class NearestTarget extends TargetComponent {
                         }
                     }
                 }
-            }.runTaskTimer((Plugin) Fabled.inst(), 0, Math.max(1, preview.getInt("sphere-" + "period", 5)));
+            }.runTaskTimer(Fabled.inst(), 0, Math.max(1, preview.getInt("sphere-" + "period", 5)));
             onPreviewStop.add(task::cancel);
         }
     }
@@ -187,10 +185,10 @@ public class NearestTarget extends TargetComponent {
         return "nearest";
     }
 
-    private static class DistanceComparator implements Comparator<LivingEntity> {
-        private Location loc;
+    public static class DistanceComparator implements Comparator<LivingEntity> {
+        private final Location loc;
 
-        private DistanceComparator(final Location loc) {
+        public DistanceComparator(final Location loc) {
             this.loc = loc;
         }
 

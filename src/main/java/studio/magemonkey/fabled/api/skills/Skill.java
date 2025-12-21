@@ -47,6 +47,7 @@ import studio.magemonkey.codex.mccore.config.parse.DataSection;
 import studio.magemonkey.codex.mccore.config.parse.NumberParser;
 import studio.magemonkey.codex.mccore.util.TextFormatter;
 import studio.magemonkey.codex.registry.DamageRegistry;
+import studio.magemonkey.codex.util.StringUT;
 import studio.magemonkey.fabled.Fabled;
 import studio.magemonkey.fabled.api.ReadOnlySettings;
 import studio.magemonkey.fabled.api.Settings;
@@ -86,6 +87,7 @@ public abstract class Skill implements IconHolder {
     private static final String            MSG              = "msg";
     private static final String            PERM             = "needs-permission";
     private static final String            COOLDOWN_MESSAGE = "cooldown-message";
+    private static final String            INCOMPATIBLE     = "incompatible";
     private static final String            DESC             = "desc";
     private static final String            ATTR             = "attributes";
     private static final String            COMBO            = "combo";
@@ -175,6 +177,7 @@ public abstract class Skill implements IconHolder {
     private              int               skillReqLevel;
     private              boolean           needsPermission;
     private              boolean           cooldownMessage;
+    private              List<String>      incompatibleSkills;
     /**
      * -- GETTER --
      * Retrieves the ID of the skill's combo
@@ -507,7 +510,7 @@ public abstract class Skill implements IconHolder {
     }
 
     public boolean isCompatible(final PlayerData playerData) {
-        for (final String skillName : settings.getStringList(SkillAttribute.INCOMPATIBLE)) {
+        for (final String skillName : incompatibleSkills) {
             final PlayerSkill skill = playerData.getSkill(skillName);
             if (skill != null && skill.getLevel() > 0) {
                 return false;
@@ -900,6 +903,7 @@ public abstract class Skill implements IconHolder {
         config.set(REQLVL, skillReqLevel);
         config.set(PERM, needsPermission);
         config.set(COOLDOWN_MESSAGE, cooldownMessage);
+        config.set(INCOMPATIBLE, incompatibleSkills);
         if (combo >= 0 && canCast())
             config.set(COMBO, Fabled.getComboManager().getSaveString(combo));
         settings.save(config.createSection(ATTR));
@@ -931,15 +935,16 @@ public abstract class Skill implements IconHolder {
      */
     public void load(DataSection config) {
         name = config.getString(NAME, name);
-        type = TextFormatter.colorString(config.getString(TYPE, name));
+        type = StringUT.color(config.getString(TYPE, name));
         indicator = Data.parseIcon(config);
         maxLevel = config.getInt(MAX, maxLevel);
         skillReq = config.getString(REQ);
         if (skillReq == null || skillReq.isEmpty()) skillReq = null;
         skillReqLevel = config.getInt(REQLVL, skillReqLevel);
-        message = TextFormatter.colorString(config.getString(MSG, message));
+        message = StringUT.color(config.getString(MSG, message));
         needsPermission = config.getString(PERM, needsPermission + "").equalsIgnoreCase("true");
         cooldownMessage = config.getBoolean(COOLDOWN_MESSAGE, true);
+        incompatibleSkills = config.getList(INCOMPATIBLE, new ArrayList<>());
         combo = Fabled.getComboManager().parseCombo(config.getString(COMBO));
 
         if (config.isList(DESC)) {
@@ -947,7 +952,7 @@ public abstract class Skill implements IconHolder {
             description.addAll(config.getList(DESC));
         }
         if (config.isList(LAYOUT)) {
-            iconLore = TextFormatter.colorStringList(config.getList(LAYOUT));
+            iconLore = StringUT.color(config.getList(LAYOUT));
         }
 
         settings.load(config.getSection(ATTR));
